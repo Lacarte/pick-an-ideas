@@ -7,6 +7,7 @@ __pycache__/
 *.so
 
 picked_videos.db
+videos-ideas/
 
 # Distribution / packaging
 .Python

@@ -1,7 +1,32 @@
 import os
+import logging
+from datetime import datetime
 import random
 import subprocess
 import sqlite3
+
+
+# Create the "logs" directory if it doesn't exist
+try:
+    if not os.path.exists("logs"):
+        os.makedirs("logs")
+except Exception as e:
+    print("Error creating 'logs' directory:", e)
+
+# Set up logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.FileHandler(
+            f"logs/log-{datetime.now().strftime('%Y-%m-%d')}.log",
+            mode="w",
+        ),
+        logging.StreamHandler(),
+    ],
+)
+
+
 
 def scan_videos(directory, extensions):
     """Recursively scan a directory for video files with specific extensions."""
@@ -31,10 +56,10 @@ def clear_db(db_conn):
 
 def main():
     # Directory to search for video files
-    directory = r'C:\Users\LENOVO\Desktop\pick-an-idea\videos-ideas'
+    directory = r'C:\Users\LENOVO\Desktop\[video]\[useful]'
     
     # Video file extensions to look for
-    extensions = ('.mp4', '.avi', '.mkv')
+    extensions = ('.mp4', '.avi', '.mkv', '.flv')
 
     # Connect to the SQLite database (it will be created if it doesn't exist)
     conn = sqlite3.connect("picked_videos.db")
@@ -62,13 +87,13 @@ def main():
         save_to_db(conn, picked_video)
         
         # Print the picked video filename
-        print("Picked video:", picked_video)
+        logging.info(f"Picked video:, {picked_video}")
         subprocess.Popen(['explorer', picked_video])
 
 
         
     else:
-        print("All videos have been picked, clearing the memory...")
+        logging.info("All videos have been picked, clearing the memory...")
         # Clear the database since all videos have been picked
         clear_db(conn)
 
